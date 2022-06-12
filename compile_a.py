@@ -1,3 +1,5 @@
+import time
+
 """
 compiles a easy form of assembly
 
@@ -56,45 +58,58 @@ class ram:
         for item in self.lines:
             print(item)
 
-        self.sort()
 
     def comp(self):
-        # self.sort()
+        self.sort()
+
         count = 0
         skipNxt = False
         while count < len(self.lines):
             line = self.lines[count]
+
+            # time.sleep(1)
+            # print(line)
+
             if skipNxt:
                 count += 1
             elif line[1] == "TST":
                 index = self.search(line[2], 0)
-                # print(index)
-                if self.lines[index][1] != "VAR":
-                    print(f"On line {self.lines[index[0]]} is no var defined!")
-                    break
-                elif self.lines[index][2] == 0:
+
+                if self.lines[index][2] == 0:
                     skipNxt = True
 
             elif line[1] == "JMP":
-                count = line[2] - 1
+                index = self.search(line[2], 0)
+                count = index - 1
 
             elif line[1] == "DEC":
                 index = self.search(line[2], 0)
-                if self.lines[index][1] != "VAR":
-                    print(f"On line {self.lines[index[0]]} is no var defined!")
-                    break
-                else:
-                    self.lines[index][2] -= 1
+                self.lines[index][2] -= 1
+
             elif line[1] == "INC":
                 index = self.search(line[2], 0)
-                if self.lines[index][1] != "VAR":
-                    print(f"On line {self.lines[index[0]]} is no var defined!")
-                else:
-                    self.lines[index][2] += 1
+
+                self.lines[index][2] += 1
+
             elif line[1] == "HLT":
                 break
             count += 1
+
         print("Process finished with exit code 0 - MURM")
+
+    def sort(self):
+        n = len(self.lines)
+        swapped = False
+
+        for i in range(n - 1):
+
+            for j in range(0, n - i - 1):
+                if self.lines[j][0] > self.lines[j + 1][0]:
+                    swapped = True
+                    self.lines[j], self.lines[j + 1] = self.lines[j + 1], self.lines[j]
+
+            if not swapped:
+                return
 
     def search(self, value, index):
         obj_index = 0
@@ -111,8 +126,6 @@ class ram:
 
         return obj_index
 
-    def sort(self):
-        pass
 
 
 ram = ram()
@@ -126,6 +139,9 @@ def inputLoop():
             pass
         elif i.lower() == "comp":
             ram.comp()
+        elif i.lower() == "sort":
+            ram.sort()
+            ram.print()
         elif i.lower() == "stop":
             run = False
         else:
