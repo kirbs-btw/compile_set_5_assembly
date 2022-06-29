@@ -67,7 +67,10 @@ class ram:
 
         count = 0
         skipNxt = False
-        while count < len(self.lines):
+
+        main.runtime = True
+
+        while count < len(self.lines) and main.runtime:
 
             if skipNxt:
                 count += 1
@@ -94,10 +97,17 @@ class ram:
                 index = self.search(line[2], 0)
                 self.lines[index][2] -= 1
 
+                check = f"{self.lines[index][0]} {self.lines[index][1]} {self.lines[index][2] + 1} -> {self.lines[index][0]} {self.lines[index][1]} {self.lines[index][2]}"
+                main.output.insert(tk.END, f"{check}\n\n")
+                main.output.update()
+
             elif line[1] == "INC":
                 index = self.search(line[2], 0)
-
                 self.lines[index][2] += 1
+
+                check = f"{self.lines[index][0]} {self.lines[index][1]} {self.lines[index][2] - 1} -> {self.lines[index][0]} {self.lines[index][1]} {self.lines[index][2]}"
+                main.output.insert(tk.END, f"{check}\n\n")
+                main.output.update()
 
             elif line[1] == "HLT":
                 break
@@ -108,8 +118,6 @@ class ram:
 
         main.output.insert(tk.END, "\nProcess finished with exit code 0 - MURM \n")
         main.output.update()
-
-
 
         print("Process finished with exit code 0 - MURM")
 
@@ -145,6 +153,7 @@ class ram:
 
 class ide:
     def __init__(self):
+        self.runtime = False
         self.ram = ram()
         self.console_output = ""
 
@@ -158,12 +167,40 @@ class ide:
         self.inputField.place(relx=0.1, rely=0.1, relwidth=0.5, relheight=0.8)
 
         self.compileButton = tk.Button(self.canvas, text="execute", font=(15), command=lambda: self.compile(), bg="#599fd7", fg="#ffffff")
-        self.compileButton.place(relx=0.6, rely=0.85, relwidth=0.3, relheight=0.05)
+        self.compileButton.place(relx=0.6, rely=0.85, relwidth=0.15, relheight=0.05)
+
+        self.stopButton = tk.Button(self.canvas, text="stop", font=(15), command=lambda : self.stop(), bg="#599fd7", fg="#ffffff")
+        self.stopButton.place(relx=0.75, rely=0.85, relwidth=0.15, relheight=0.05)
 
         self.output = tk.Text(self.canvas, bg="#0f0f0f", bd=1, fg="#ffffff", insertbackground='white')
         self.output.place(relx=0.6, rely=0.1, relwidth=0.3, relheight=0.75)
 
         self.root.mainloop()
+
+    def stop(self):
+        self.runtime = False
+
+    def clean(self):
+        """
+        cuts of \n of the front and the end
+        """
+
+        code = list(self.inputField.get("1.0", "end-1c"))
+
+        for i in range(2):
+            cut = 0
+            switch = False
+            for i, c in enumerate(code):
+                if switch:
+                    break
+                if c != '\n':
+                    cut = i
+                    switch = True
+
+            code = code[cut::]
+            code = code[::-1]
+
+        return code
 
     def compile(self):
         self.output.delete('1.0', tk.END)
@@ -171,21 +208,13 @@ class ide:
         self.ram.clear()
         line = ""
 
+        code = self.clean()
 
-        """
-        need to del all \n that are at the end of the list
-        """
-
-
-
-        print(list(self.inputField.get("1.0", "end-1c")))
-
-        for i in self.inputField.get("1.0", "end-1c"):
+        for i in code:
             if i == '\n':
-                print(line)
                 self.ram.addLine(line)
-                # print(line)
                 line = ""
+
             else:
                 line += str(i)
 
