@@ -1,6 +1,6 @@
 import tkinter as tk
 import time
-
+from tkinter import filedialog
 
 class ram:
     def __init__(self):
@@ -163,6 +163,19 @@ class ide:
         self.canvas = tk.Canvas(height=900, width=900, bg="#202020")
         self.canvas.pack()
 
+        # <tool bar>
+
+        self.toolbar = tk.Canvas(self.canvas, bg="Red")
+        self.toolbar.place(relx=0, rely=0, relwidth=1, relheight=0.05)
+
+        self.saveButton = tk.Button(self.toolbar, bg="Blue", command=lambda : self.saveProgram())
+        self.saveButton.place(relx=0, rely=0, relwidth=0.05, relheight=1)
+
+        self.loadButton = tk.Button(self.toolbar, bg="Green", command=lambda : self.loadProgram())
+        self.loadButton.place(relx=0.05, rely=0, relwidth=0.05, relheight=1)
+
+        # </toolbar end>
+
         self.inputField = tk.Text(self.canvas, bg="#0f0f0f", bd=1, fg="#ffffff", insertbackground='white')
         self.inputField.place(relx=0.1, rely=0.1, relwidth=0.5, relheight=0.8)
 
@@ -176,6 +189,22 @@ class ide:
         self.output.place(relx=0.6, rely=0.1, relwidth=0.3, relheight=0.75)
 
         self.root.mainloop()
+
+    def loadProgram(self):
+        filePath = filedialog.askopenfilename()
+        file = open(filePath)
+        openFile = file.readlines()
+
+        for line in openFile:
+            self.inputField.insert(tk.END, line)
+
+        self.inputField.update()
+
+    def saveProgram(self):
+        filePath = filedialog.askopenfilename()
+        file = open(filePath, "w+")
+        file.write(self.inputField.get("1.0", "end-1c"))
+        file.close()
 
     def stop(self):
         self.runtime = False
