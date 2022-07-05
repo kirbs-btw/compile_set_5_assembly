@@ -191,6 +191,7 @@ class ide:
         self.root.mainloop()
 
     def loadProgram(self):
+        self.inputField.delete('1.0', tk.END)
         filePath = filedialog.askopenfilename()
         try:
 
@@ -200,13 +201,13 @@ class ide:
             for line in openFile:
                 self.inputField.insert(tk.END, line)
 
-            self.inputField.update()
 
         except:
             self.inputField.insert(tk.END, "NO FILE FOUND\n")
 
-        
+
     def saveProgram(self):
+        self.inputField.delete('1.0', tk.END)
         filePath = filedialog.askopenfilename()
         try:
             file = open(filePath, "w+")
