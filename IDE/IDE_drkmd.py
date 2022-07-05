@@ -160,18 +160,18 @@ class ide:
         self.root = tk.Tk()
         self.root.title("MRML - compiler")
 
-        self.canvas = tk.Canvas(height=900, width=900, bg="#202020")
+        self.canvas = tk.Canvas(height=900, width=900, bg="#202020", highlightthickness=0)
         self.canvas.pack()
 
         # <tool bar>
 
-        self.toolbar = tk.Canvas(self.canvas, bg="Red")
+        self.toolbar = tk.Canvas(self.canvas, bg="#0f0f0f", highlightthickness=0)
         self.toolbar.place(relx=0, rely=0, relwidth=1, relheight=0.05)
 
-        self.saveButton = tk.Button(self.toolbar, bg="Blue", command=lambda : self.saveProgram())
+        self.saveButton = tk.Button(self.toolbar, text="save", bg="#202020", fg="#ffffff",command=lambda : self.saveProgram())
         self.saveButton.place(relx=0, rely=0, relwidth=0.05, relheight=1)
 
-        self.loadButton = tk.Button(self.toolbar, bg="Green", command=lambda : self.loadProgram())
+        self.loadButton = tk.Button(self.toolbar, text="open",bg="#202020", fg="#ffffff",command=lambda : self.loadProgram())
         self.loadButton.place(relx=0.05, rely=0, relwidth=0.05, relheight=1)
 
         # </toolbar end>
@@ -192,19 +192,29 @@ class ide:
 
     def loadProgram(self):
         filePath = filedialog.askopenfilename()
-        file = open(filePath)
-        openFile = file.readlines()
+        try:
 
-        for line in openFile:
-            self.inputField.insert(tk.END, line)
+            file = open(filePath)
+            openFile = file.readlines()
 
-        self.inputField.update()
+            for line in openFile:
+                self.inputField.insert(tk.END, line)
 
+            self.inputField.update()
+
+        except:
+            self.inputField.insert(tk.END, "NO FILE FOUND\n")
+
+        
     def saveProgram(self):
         filePath = filedialog.askopenfilename()
-        file = open(filePath, "w+")
-        file.write(self.inputField.get("1.0", "end-1c"))
-        file.close()
+        try:
+            file = open(filePath, "w+")
+            file.write(self.inputField.get("1.0", "end-1c"))
+            file.close()
+
+        except:
+            self.inputField.insert(tk.END, "SOMETHING WENT WRONG\n")
 
     def stop(self):
         self.runtime = False
