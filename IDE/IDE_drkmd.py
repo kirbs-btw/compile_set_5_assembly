@@ -205,9 +205,7 @@ class ide:
         except:
             self.inputField.insert(tk.END, "NO FILE FOUND\n")
 
-
     def saveProgram(self):
-        self.inputField.delete('1.0', tk.END)
         filePath = filedialog.askopenfilename()
         try:
             file = open(filePath, "w+")
