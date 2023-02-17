@@ -1,1 +1,0 @@
-Here a little collection of part from the code to be conected to it later  

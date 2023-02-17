@@ -1,6 +1,0 @@
-line highliting 
-output current line with the used var
-edit output time
-save file
-load file 
-error detection 
