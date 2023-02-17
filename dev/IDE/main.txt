@@ -1,0 +1,6 @@
+10 var 5
+1 jmp 3
+2 jmp 4
+3 jmp 2
+4 hlt 0
+5 jmp 3
